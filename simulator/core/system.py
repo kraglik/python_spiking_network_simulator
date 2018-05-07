@@ -1,5 +1,4 @@
 from simulator.core.event_bus import EventBus
-from simulator.core.events import Event
 
 
 class System:
