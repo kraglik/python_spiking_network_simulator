@@ -1,8 +1,8 @@
-from simulator.core.event_bus import EventBus
+from simulator.core import Actor, EventBus
 from simulator.math.types import Point
 
 
-class OctreeNode(EventBus):
+class OctreeNode(Actor, EventBus):
 
     def __init__(self, center: Point, side_len: float, time=0.0, *args, **kwargs):
         super(OctreeNode, self).__init__(time, *args, **kwargs)
@@ -12,6 +12,7 @@ class OctreeNode(EventBus):
         self.linked_nodes_notifications = 0
 
     def receive(self, event):
+        self.run()
         return None
 
     def split(self):

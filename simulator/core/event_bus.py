@@ -1,11 +1,8 @@
-from abc import ABC, abstractmethod
-
-from simulator.core.actor import Actor
+from abc import ABC
 
 
-class EventBus(Actor, ABC):
-    def __init__(self, time=0.0, *args, **kwargs):
-        super(EventBus, self).__init__(*args, **kwargs)
+class EventBus(ABC):
+    def __init__(self, time=0.0):
         self.events = []
         self.events_cache = []
         self.time = time
@@ -19,19 +16,17 @@ class EventBus(Actor, ABC):
 
     def subscribe(self, actor):
         self.subscribers[actor.actor_system_id] = actor
-
-    def unsubscribe(self, actor):
-        self.subscribers.pop(actor.actor_system_id)
+        actor.event_bus = self
 
     def add_events(self, events):
         self.events_cache.extend(events)
         self._merge_events_with_cache()
 
-    def run(self, initial_events=None):
+    def run(self, initial_events=None, stop_time=None):
 
         self.events.extend([] if initial_events is None else initial_events)
 
-        while len(self.events) > 0:
+        while len(self.events) > 0 and (stop_time is None or self.time < stop_time):
 
             event = self.events.pop(0)
             self.time = event.timing
@@ -45,7 +40,3 @@ class EventBus(Actor, ABC):
                     response = [response]
 
                 self.add_events(response)
-
-    @abstractmethod
-    def receive(self, event):
-        return None
