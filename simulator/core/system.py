@@ -16,11 +16,3 @@ class System:
 
         actor = actor_class(*args, **kwargs)
         self.event_bus.subscribe(actor)
-
-    def unsubscribe(self, actor):
-        self.event_bus.unsubscribe(actor)
-
-    def subscribe(self, actor):
-        self.event_bus.subscribe(actor)
-
-

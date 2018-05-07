@@ -16,7 +16,9 @@ class EventBus(ABC):
 
     def subscribe(self, actor):
         self.subscribers[actor.actor_system_id] = actor
-        actor.event_bus = self
+
+    def unsubscribe(self, actor):
+        self.subscribers.pop(actor.actor_system_id)
 
     def add_events(self, events):
         self.events_cache.extend(events)
