@@ -14,11 +14,11 @@ class EventBus(ABC):
         self.events.sort(key=lambda event: event.timing)
         self.events_cache = []
 
-    def subscribe(self, actor):
-        self.subscribers[actor.actor_system_id] = actor
+    def subscribe(self, actor_ref):
+        self.subscribers[actor_ref.id] = actor_ref
 
-    def unsubscribe(self, actor):
-        self.subscribers.pop(actor.actor_system_id)
+    def unsubscribe(self, actor_ref):
+        self.subscribers.pop(actor_ref.id)
 
     def add_events(self, events):
         self.events_cache.extend(events)
