@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Any, Optional
 
 from simulator.core.actor import Actor
-from simulator.model.neuron.events import Spike, Connect, SubscriptionMessage
+from simulator.model.neuron.events import Spike, Connect, SubscriptionMessage, Subscribe
 
 
 class Soma(Actor, ABC):
@@ -33,6 +33,9 @@ class Soma(Actor, ABC):
     def receive(self, message: Any) -> Any:
         if isinstance(message, Connect):
             self.axon.send(message)
+        elif isinstance(message, Subscribe):
+            subscriber_ref = message.subscriber_ref
+            self.subscribe(subscriber_ref)
         spike = self.apply(message)
         if spike:
             self.broadcast(spike)
@@ -50,4 +53,4 @@ class Soma(Actor, ABC):
 
     def broadcast(self, message):
         for subscriber in self.subscribers:
-            subscriber.send(SubscriptionMessage(data=message, sender=self.ref.id))
+            subscriber.send(SubscriptionMessage(data=message, sender_id=self.ref.id))

@@ -9,7 +9,7 @@ class AxonalDelayType(Enum):
     COMPLEMENT = 2
 
 
-Spike = namedtuple('Spike', ['sender_id'])
+Spike = namedtuple('Spike', ['timing', 'sender_id'])
 
 ActionPotential = namedtuple('ActionPotential', ['value', 'timing'])
 
@@ -25,3 +25,4 @@ HasFreeSpine = namedtuple('HasFreeSpine', ['type'])
 
 SubscriptionMessage = namedtuple('SubscriptionMessage', ['data', 'sender_id'])
 
+Subscribe = namedtuple('Subscribe', ['subscriber_ref'])

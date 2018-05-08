@@ -11,6 +11,10 @@ class System:
         self.actors = dict()
         self.actors_classes = dict()
 
+    @property
+    def time(self):
+        return self.event_bus.time
+
     def spawn(self, actor) -> ActorRef:
         self.actors_count += 1
         id = self.actors_count
@@ -23,12 +27,15 @@ class System:
         self.actors_classes[actor.__class__].append(actor_ref)
         self.event_bus.subscribe(actor_ref)
 
+        actor_ref._actor.on_start()
+
         return actor_ref
 
     def kill(self, actor_ref, called_from_actor=False):
-        self.actors.pop(actor_ref.id)
-        self.actors_classes[actor_ref._actor.__class__].remove(actor_ref)
-        self.event_bus.unsubscribe(actor_ref)
+        if actor_ref.id in self.actors.keys():
+            self.actors.pop(actor_ref.id)
+            self.actors_classes[actor_ref._actor.__class__].remove(actor_ref)
+            self.event_bus.unsubscribe(actor_ref)
 
         if not called_from_actor:
             del actor_ref

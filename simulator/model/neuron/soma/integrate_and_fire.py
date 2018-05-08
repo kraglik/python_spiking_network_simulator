@@ -22,12 +22,16 @@ class IntegrateAndFire(Soma):
 
     def apply(self, message):
         if isinstance(message, ActionPotential):
-            current, timing = message
+            spike = None
+            current, timing = message.value, message.timing
 
-            self.u = self.u_rest + (self.u - self.u_rest) * math.exp((self.time - timing) / self.tau)
+            self.u = self.u_rest + (self.u - self.u_rest) * math.exp(-(timing - self.time) / self.tau)
             self.u += current
             self.time = timing
 
-            if self.u > self.threshold:
+            if self.u >= self.threshold:
                 self.last_spike = timing
-                self.axon.send(Spike(timing=timing, sender_id=self.ref.id))
+                self.u = self.u_rest
+                spike = Spike(timing=timing, sender_id=self.ref.id)
+                self.axon.send(spike)
+            return spike

@@ -10,8 +10,6 @@ class ActorRef:
         self._id = id
         self._actor._ref = self
 
-        actor.on_start()
-
     @property
     def id(self):
         return self._id
@@ -28,10 +26,6 @@ class ActorRef:
         )
 
     def kill(self):
-        self._actor.on_die()
-        self._system.kill(self, called_from_actor=True)
-
-    def __del__(self):
         self._actor.on_die()
         self._system.kill(self, called_from_actor=True)
 

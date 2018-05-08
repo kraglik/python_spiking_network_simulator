@@ -7,8 +7,8 @@ from random import random
 
 
 class DelayedAxonalBranch(AxonalBranch):
-    def __init__(self, parent, delay=random() * 2.0):
-        super(DelayedAxonalBranch, self).__init__(parent)
+    def __init__(self, parent, delay=random() * 2.0, **kwargs):
+        super(DelayedAxonalBranch, self).__init__(parent, **kwargs)
         self.delay = delay
 
     def branch(self, points: List[Point], args, kwargs):
