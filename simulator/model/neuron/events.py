@@ -10,7 +10,18 @@ class AxonalDelayType(Enum):
 
 
 Spike = namedtuple('Spike', ['sender_id'])
-ActionPotential = namedtuple('ActionPotential', ['value'])
+
+ActionPotential = namedtuple('ActionPotential', ['value', 'timing'])
+
 AxonalBranching = namedtuple('AxonalBranching', ['point', 'delay', 'delay_type'])
+
 BranchingCycle = namedtuple('BranchingCycle', ['radius'])
+
+Connect = namedtuple('Connect', ['target_id'])
+
+NewSynapse = namedtuple('NewSynapse', ['synapse_ref'])
+
+HasFreeSpine = namedtuple('HasFreeSpine', ['type'])
+
+SubscriptionMessage = namedtuple('SubscriptionMessage', ['data', 'sender_id'])
 

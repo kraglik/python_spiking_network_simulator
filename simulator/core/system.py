@@ -15,7 +15,7 @@ class System:
         self.actors_count += 1
         id = self.actors_count
 
-        actor_ref = ActorRef(actor=copy(actor), system=self, id=id)
+        actor_ref = ActorRef(actor=actor, system=self, id=id)
 
         self.actors[id] = actor_ref
         if actor.__class__ not in self.actors_classes.keys():
@@ -43,5 +43,8 @@ class System:
 
     def run(self, **kwargs):
         self.event_bus.run(**kwargs)
+
+    def get_by_id(self, id) -> ActorRef:
+        return self.actors[id]
 
 
