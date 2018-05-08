@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from typing import List
 
 from simulator.core.actor import Actor
 from simulator.model.neuron.events import Spike
