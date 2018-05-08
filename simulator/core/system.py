@@ -21,16 +21,19 @@ class System:
         if actor.__class__ not in self.actors_classes.keys():
             self.actors_classes[actor.__class__] = []
         self.actors_classes[actor.__class__].append(actor_ref)
-        self.event_bus.subscribe(actor)
+        self.event_bus.subscribe(actor_ref)
 
         return actor_ref
 
-    def broadcast(self, message, actor_class = None):
+    def broadcast(self, message, actor_class=None):
         if actor_class is None:
             for actor in self.actors.values():
                 actor.send(message)
         else:
             for actor in self.actors_classes[actor_class]:
                 actor.send(message)
+
+    def run(self):
+        self.event_bus.run()
 
 

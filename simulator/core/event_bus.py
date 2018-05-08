@@ -24,6 +24,9 @@ class EventBus(ABC):
         self.events_cache.extend(events)
         self._merge_events_with_cache()
 
+    def add_event(self, event):
+        self.add_events([event])
+
     def run(self, initial_events=None, stop_time=None):
 
         self.events.extend([] if initial_events is None else initial_events)
@@ -32,9 +35,9 @@ class EventBus(ABC):
 
             event = self.events.pop(0)
             self.time = event.timing
-            target_actor = self.subscribers[event.target_id]
+            actor_ref = self.subscribers[event.target_id]
 
-            response = target_actor.receive(event.data)
+            response = actor_ref._actor.receive(event.data)
 
             if response is not None:
 

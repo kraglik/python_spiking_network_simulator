@@ -9,7 +9,7 @@ class ActorRef:
 
     @property
     def id(self):
-        return id
+        return self._id
 
     def send(self, message, timing=None):
         if timing is None:
