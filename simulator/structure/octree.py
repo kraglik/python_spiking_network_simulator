@@ -2,7 +2,7 @@ from simulator.core import Actor, EventBus
 from simulator.math.types import Point
 
 
-class OctreeNode(Actor, EventBus):
+class OctreeNode(Actor):
 
     def __init__(self, center: Point, side_len: float, time=0.0, *args, **kwargs):
         super(OctreeNode, self).__init__(time, *args, **kwargs)

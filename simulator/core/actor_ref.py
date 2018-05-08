@@ -6,6 +6,7 @@ class ActorRef:
         self._actor = actor
         self._system = system
         self._id = id
+        self._actor._ref = self
 
     @property
     def id(self):
@@ -21,3 +22,6 @@ class ActorRef:
                 target_id=self._id
             )
         )
+
+    def __del__(self):
+        self._system.kill(self, called_from_actor=True)

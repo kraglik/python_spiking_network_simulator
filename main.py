@@ -1,6 +1,6 @@
 from collections import namedtuple
 
-from simulator.core import Actor, ActorRef, System
+from simulator.core import Actor, System
 
 
 NameMessage = namedtuple('NameMessage', ['name'])
@@ -23,7 +23,11 @@ def main():
 
     g1.send(NameMessage(name='Greeter #1'), timing=0.1)
     g2.send(NameMessage(name='Greeter #2'), timing=0.2)
-    g3.send(NameMessage(name='Greeter #3'), timing=0.15)
+    g3.send(NameMessage(name='Greeter #3'), timing=0.19)
+
+    system.run(stop_time=0.16)
+
+    g1.send(NameMessage(name='Late Greeter #1'), timing=0.18)
 
     system.run()
 
