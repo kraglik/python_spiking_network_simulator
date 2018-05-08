@@ -16,11 +16,7 @@ class ActorRef:
         if timing is None:
             timing = self._system.event_bus.time
         self._system.event_bus.add_event(
-            Event(
-                data=message,
-                timing=timing,
-                target_id=self._id
-            )
+            Event(data=message,  timing=timing, target_id=self._id)
         )
 
     def __del__(self):
