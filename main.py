@@ -15,33 +15,45 @@ import matplotlib.pyplot as plt
 sys.setrecursionlimit(25000)  # Required for saving very recursive data structures like our network
 
 
+load = False
+
+
 def main():
     print('Creating system...')
 
-    net = Network()
+    if load:
+        net = Network.load('net.pickle')
+        group = list(net.ensembles)[0]
 
-    logger_ref = net.system.spawn(Logger())
+        net.run()
+        net.set_time(0)
 
-    group = Ensemble(size=100, network=net)
+    else:
+        net = Network()
 
-    group.connect(group, random_rule(0.35))
+        print('Creating neuronal group...')
+        net.logger = net.system.spawn(Logger())
+
+        group = Ensemble(size=100, network=net)
+
+        for neuron_ref in group.neurons:
+            neuron_ref.send(Subscribe(subscriber_ref=net.logger))
+
+        print('Creating synaptic connections...')
+
+        group.connect(group, random_rule(0.3))
 
     print('Done.')
     print('Spawning actors...')
-
-    for neuron_ref in group.neurons:
-        neuron_ref.send(Subscribe(subscriber_ref=logger_ref))
-
-    net.run()
 
     print('Done.')
     print('Simulating...')
 
     while net.time < 499.0:
         events = []
-        for i in range(randint(25, 45)):
+        for i in range(randint(35, 45)):
             timing = net.time + random()
-            value = 3.0 + random() * 8.0
+            value = 3.0 + random() * 7.0
             target_id = choice(group.neurons).id
             events.append(
                 Event(
@@ -56,7 +68,7 @@ def main():
 
     print('Done.')
 
-    spikes = logger_ref.ask('get_log')
+    spikes = net.logger.ask('get_log')
     spikes = flatten([value for key, value in spikes.items()])
 
     senders = list(set([sender for _, sender in spikes]))
@@ -67,7 +79,7 @@ def main():
 
     print('Total spikes: %d' % len(spikes))
 
-    spikes_matrix = np.zeros((100, 500))
+    spikes_matrix = np.zeros((101, 501))
 
     for sender, timing in spikes:
         spikes_matrix[sender, int(timing)] = 1.0
