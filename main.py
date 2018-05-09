@@ -64,31 +64,6 @@ def main():
                 )
             )
 
-        if system.time < 500.0 and int(system.time) % 40 < 20:
-            for i in range(0, 150, 8):
-                timing = system.time + 0.5
-                value = 10.0
-                target_id = xs[i].id
-                events.append(
-                    Event(
-                        data=ActionPotential(timing=timing, value=value),
-                        timing=timing,
-                        target_id=target_id
-                    )
-                )
-        if system.time > 500.0 and int(system.time) % 40 < 20:
-            for i in range(0, 75, 8):
-                timing = system.time + 0.5
-                value = 10.0
-                target_id = xs[i].id
-                events.append(
-                    Event(
-                        data=ActionPotential(timing=timing, value=value),
-                        timing=timing,
-                        target_id=target_id
-                    )
-                )
-
         system.event_bus.add_events(events)
         system.run(stop_time=system.time + 1)
 
@@ -102,10 +77,6 @@ def main():
 
     senders = {senders[i]: i for i in range(len(senders))}
     spikes = [(senders[sender], timing) for timing, sender in spikes]
-
-    print('Generated spikes:')
-    for sender, timing in spikes:
-        print('    %d => spiked at %.2f milliseconds' % (sender, timing))
 
     print('Total spikes: %d' % len(spikes))
 
