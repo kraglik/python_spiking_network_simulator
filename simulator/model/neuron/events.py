@@ -10,6 +10,7 @@ class AxonalDelayType(Enum):
 
 
 Spike = namedtuple('Spike', ['timing', 'sender_id'])
+SpikeTrace = namedtuple('SpikeTrace', ['timing'])
 
 ActionPotential = namedtuple('ActionPotential', ['value', 'timing'])
 

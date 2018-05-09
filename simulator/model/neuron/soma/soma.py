@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Any, Optional
 
 from simulator.core.actor import Actor
-from simulator.model.neuron.events import Spike, Connect, SubscriptionMessage, Subscribe
+from simulator.model.neuron.events import Spike, Connect, SubscriptionMessage, Subscribe, SpikeTrace
 
 
 class Soma(Actor, ABC):
@@ -39,6 +39,8 @@ class Soma(Actor, ABC):
         spike = self.apply(message)
         if spike:
             self.broadcast(spike)
+            self.axon.send(spike)
+            self.dendrites.send(SpikeTrace(timing=spike.timing))
 
     def ask(self, message):
         if message == 'get_dendrite':

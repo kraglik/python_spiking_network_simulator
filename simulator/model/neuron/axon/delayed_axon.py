@@ -15,8 +15,8 @@ class DelayedAxonalBranch(AxonalBranch):
         super(self).branch(points, args, kwargs)
 
     def map_spike(self, spike: Spike):
-        timing = spike
-        return Spike(timing=timing + self.delay)
+        timing = spike.timing
+        return Spike(timing=timing + self.delay, sender_id=spike.sender_id)
 
     def apply(self, message: Any) -> Any:
         pass

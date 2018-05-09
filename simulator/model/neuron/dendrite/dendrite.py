@@ -3,7 +3,7 @@ from typing import List, Any, Dict
 
 from simulator.core import ActorRef
 from simulator.core.actor import Actor
-from simulator.model.neuron.events import NewSynapse, HasFreeSpine
+from simulator.model.neuron.events import NewSynapse, HasFreeSpine, SpikeTrace
 
 
 class DendriteBranch(Actor, ABC):
@@ -20,9 +20,14 @@ class DendriteBranch(Actor, ABC):
 
     def receive(self, message):
         if isinstance(message, NewSynapse):
-            type = message.synapse.ask('type')
+            type = message.synapse_ref.ask('type')
             self.quotas[type] = max(self.quotas[type] - 1, 0)
-            self.synapses.append(message.synapse)
+            self.synapses.append(message.synapse_ref)
+        if isinstance(message, SpikeTrace):
+            for synapse in self.synapses:
+                synapse.send(message)
+            for branch in self.branches:
+                branch.send(message)
         self.apply(message)
 
     def ask(self, message: Any) -> Any:

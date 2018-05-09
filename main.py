@@ -24,33 +24,35 @@ def main():
         return system.spawn(DelayedAxonalBranch(neuron_ref, synapse=Synapse()))
 
     def dendrite_generator(neuron_ref: ActorRef) -> ActorRef:
-        return system.spawn(LinearDendriteBranch(parent=neuron_ref, quotas={0: 1000, 1: 2000}))
+        return system.spawn(LinearDendriteBranch(parent=neuron_ref, quotas={0: 100000}))
 
-    neuron_proto = IntegrateAndFire(axon_generator, dendrite_generator)
+    neuron_proto = IntegrateAndFire(
+        dendrites_generator=dendrite_generator,
+        axon_generator=axon_generator
+    )
 
     print('Done.')
     print('Spawning actors...')
 
-    xs = [system.spawn(neuron_proto) for i in range(400)]
-    ys = [system.spawn(neuron_proto) for i in range(400)]
+    xs = [system.spawn(neuron_proto) for i in range(150)]
 
     for neuron_ref in xs:
         neuron_ref.send(Subscribe(subscriber_ref=logger_ref))
 
+    print('creating connections...')
+
     for neuron_ref in xs:
-        for postsynaptic_ref in choices(ys, k=15):
+        for postsynaptic_ref in choices(xs, k=45):
             neuron_ref.send(Connect(target_id=postsynaptic_ref.id))
 
-    for neuron_ref in ys:
-        for postsynaptic_ref in choices(xs, k=15):
-            neuron_ref.send(Connect(target_id=postsynaptic_ref.id))
+    system.run()
 
     print('Done.')
     print('Simulating...')
 
-    while system.time < 1000.0:
+    while system.time < 999.0:
         events = []
-        for i in range(randint(25, 125)):
+        for i in range(randint(25, 45)):
             timing = system.time + random()
             value = 3.0 + random() * 8.0
             target_id = choice(xs).id
@@ -61,6 +63,32 @@ def main():
                     target_id=target_id
                 )
             )
+
+        if system.time < 500.0 and int(system.time) % 40 < 20:
+            for i in range(0, 150, 8):
+                timing = system.time + 0.5
+                value = 10.0
+                target_id = xs[i].id
+                events.append(
+                    Event(
+                        data=ActionPotential(timing=timing, value=value),
+                        timing=timing,
+                        target_id=target_id
+                    )
+                )
+        if system.time > 500.0 and int(system.time) % 40 < 20:
+            for i in range(0, 75, 8):
+                timing = system.time + 0.5
+                value = 10.0
+                target_id = xs[i].id
+                events.append(
+                    Event(
+                        data=ActionPotential(timing=timing, value=value),
+                        timing=timing,
+                        target_id=target_id
+                    )
+                )
+
         system.event_bus.add_events(events)
         system.run(stop_time=system.time + 1)
 
@@ -81,7 +109,7 @@ def main():
 
     print('Total spikes: %d' % len(spikes))
 
-    spikes_matrix = np.zeros((400, 1001))
+    spikes_matrix = np.zeros((150, 1000))
 
     for sender, timing in spikes:
         spikes_matrix[sender, int(timing)] = 1.0

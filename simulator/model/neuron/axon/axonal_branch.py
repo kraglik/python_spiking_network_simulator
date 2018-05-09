@@ -49,12 +49,6 @@ class AxonalBranch(Actor, ABC):
 
         return branches
 
-    def transfer(self, spike: Spike):
-        spike = self.map_spike(spike)
-
-        for branch in self.branches:
-            branch.send(spike)
-
     def transfer_backward(self, action_potential: ActionPotential):
         pass
 
@@ -76,5 +70,14 @@ class AxonalBranch(Actor, ABC):
                 synapse_proto.type   = self.type
 
                 synapse_ref = self.spawn(synapse_proto)
+                self.synapses.append(synapse_ref)
 
                 dendrite_ref.send(NewSynapse(synapse_ref))
+        elif isinstance(message, Spike):
+            message = self.map_spike(message)
+
+            for branch in self.branches:
+                branch.send(message)
+
+            for synapse in self.synapses:
+                synapse.send(message)

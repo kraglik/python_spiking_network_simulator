@@ -37,11 +37,4 @@ class EventBus(ABC):
             self.time = event.timing
             actor_ref = self.subscribers[event.target_id]
 
-            response = actor_ref._actor.receive(event.data)
-
-            if response is not None:
-
-                if not isinstance(response, list):
-                    response = [response]
-
-                self.add_events(response)
+            actor_ref._actor.receive(event.data)

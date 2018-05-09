@@ -12,11 +12,13 @@ class IntegrateAndFire(Soma):
                  dendrites_generator: Callable[[ActorRef], ActorRef],
                  axon_generator: Callable[[ActorRef], ActorRef],
                  u_rest: float = 0.0,
+                 u_reset: float = -10.0,
                  tau=5.0):
         Soma.__init__(self, dendrites_generator, axon_generator)
 
         self.u = 0.0
         self.u_rest = u_rest
+        self.u_reset = u_reset
         self.threshold = 25.0
         self.tau = tau
 
@@ -31,7 +33,6 @@ class IntegrateAndFire(Soma):
 
             if self.u >= self.threshold:
                 self.last_spike = timing
-                self.u = self.u_rest
+                self.u = self.u_reset
                 spike = Spike(timing=timing, sender_id=self.ref.id)
-                self.axon.send(spike)
             return spike
