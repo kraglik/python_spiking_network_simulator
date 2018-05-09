@@ -8,6 +8,7 @@ class EventBus(ABC):
         self.time = time
         self.actors_count = 0
         self.subscribers = {}
+        self.proxy_actors = {}
 
     def _merge_events_with_cache(self):
         self.events.extend(self.events_cache)
@@ -37,4 +38,7 @@ class EventBus(ABC):
             self.time = event.timing
             actor_ref = self.subscribers[event.target_id]
 
-            actor_ref._actor.receive(event.data)
+            if actor_ref in self.proxy_actors.keys():
+                self.proxy_actors[actor_ref].send(event)
+            else:
+                actor_ref._actor.receive(event.data)

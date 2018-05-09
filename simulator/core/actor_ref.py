@@ -7,6 +7,7 @@ class ActorRef:
     def __init__(self, actor, system, id):
         self._actor = copy(actor)
         self._system = system
+        self._proxy = system.proxy
         self._id = id
         self._actor._ref = self
 

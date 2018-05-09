@@ -2,6 +2,7 @@ from copy import copy
 
 from simulator.core.actor_ref import ActorRef
 from simulator.core.event_bus import EventBus
+from simulator.core.proxy import Proxy
 
 
 class System:
@@ -10,6 +11,16 @@ class System:
         self.actors_count = 0
         self.actors = dict()
         self.actors_classes = dict()
+        self.actor_proxies = dict()
+        self.proxies = []
+        self.proxy = Proxy(event_bus=self.event_bus, id=0)
+        self.proxies.append(self.proxy)
+
+    def set_actor_proxy(self, actor, proxy=None):
+        if proxy is None:
+            self.event_bus.proxy_actors[actor] = proxy
+        if actor in self.event_bus.proxy_actors.keys():
+            self.event_bus.proxy_actors.pop(actor)
 
     @property
     def time(self):
@@ -30,6 +41,13 @@ class System:
         actor_ref._actor.on_start()
 
         return actor_ref
+
+    def spawn_proxy(self) -> Proxy:
+
+        proxy = Proxy(id=len(self.proxies), system=self)
+        self.proxies.append(proxy)
+
+        return proxy
 
     def kill(self, actor_ref, called_from_actor=False):
         if actor_ref.id in self.actors.keys():
