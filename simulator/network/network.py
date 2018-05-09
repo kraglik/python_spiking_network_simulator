@@ -14,6 +14,9 @@ class Network:
     def time(self):
         return self.system.time
 
+    def set_time(self, new_time):
+        self.system.event_bus.time = new_time
+
     def add_events(self, events):
         self.system.event_bus.add_events(events)
 

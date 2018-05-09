@@ -17,6 +17,9 @@ class Logger(Actor):
 
             self.log[sender_id].append(data)
 
+        elif message == 'reset_log':
+            self.log = dict()
+
     def ask(self, message: Any) -> Any:
         if message == 'get_log':
             return self.log
