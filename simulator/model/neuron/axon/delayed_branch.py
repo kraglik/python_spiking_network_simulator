@@ -24,7 +24,7 @@ class DelayedAxonalBranch(AxonalBranch):
             for branch in self.branches:
                 branch.apply(spike)
 
-    def branch(self, points: List[Point], delays=None):
+    def branch(self, points: List[Point], delays=None, *args, **kwargs):
         if self.can_branch:
             if delays is None:
                 delays = [random() * 1.5 for _ in points]

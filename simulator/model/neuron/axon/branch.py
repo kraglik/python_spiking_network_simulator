@@ -6,10 +6,10 @@ from simulator.model.neuron.events import Spike, PSP
 
 
 class AxonalBranch:
-    def __init__(self, parent, start_point=Point(0, 0, 0), end_point=Point(0, 0, 0)):
+    def __init__(self, root, start_point=Point(0, 0, 0), end_point=Point(0, 0, 0)):
         self.start_point = start_point
         self.end_point = end_point
-        self.parent = parent
+        self.root = root
         self.branches = []
         self.synapses = []
         self.leaf = True
