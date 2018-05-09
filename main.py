@@ -12,7 +12,8 @@ from random import choice, choices, random, randint
 import numpy as np
 import matplotlib.pyplot as plt
 
-sys.setrecursionlimit(25000)
+sys.setrecursionlimit(25000)  # Required for saving very recursive data structures like our network
+
 
 def main():
     print('Creating system...')
