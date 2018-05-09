@@ -41,7 +41,7 @@ def main():
 
         print('Creating synaptic connections...')
 
-        group.connect(group, random_rule(0.3))
+        group.connect(group, random_rule(0.25))
 
     print('Done.')
     print('Spawning actors...')
@@ -51,7 +51,7 @@ def main():
 
     while net.time < 499.0:
         events = []
-        for i in range(randint(35, 45)):
+        for i in range(randint(15, 35)):
             timing = net.time + random()
             value = 3.0 + random() * 7.0
             target_id = choice(group.neurons).id
