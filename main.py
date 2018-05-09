@@ -34,14 +34,14 @@ def main():
         print('Creating neuronal group...')
         net.logger = net.system.spawn(Logger())
 
-        group = Ensemble(size=100, network=net)
+        group = Ensemble(size=200, network=net)
 
         for neuron_ref in group.neurons:
             neuron_ref.send(Subscribe(subscriber_ref=net.logger))
 
         print('Creating synaptic connections...')
 
-        group.connect(group, random_rule(0.25))
+        group.connect(group, random_rule(0.2))
 
     print('Done.')
     print('Spawning actors...')
@@ -51,7 +51,7 @@ def main():
 
     while net.time < 499.0:
         events = []
-        for i in range(randint(15, 35)):
+        for i in range(randint(35, 55)):
             timing = net.time + random()
             value = 3.0 + random() * 7.0
             target_id = choice(group.neurons).id
@@ -79,7 +79,7 @@ def main():
 
     print('Total spikes: %d' % len(spikes))
 
-    spikes_matrix = np.zeros((101, 501))
+    spikes_matrix = np.zeros((201, 501))
 
     for sender, timing in spikes:
         spikes_matrix[sender, int(timing)] = 1.0

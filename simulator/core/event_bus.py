@@ -25,7 +25,7 @@ class EventBus(ABC):
     def add_events(self, events):
         time = self.time
         for event in events:
-            dt = int(event.timing - time)
+            dt = 4 * int(event.timing - time) + int((event.timing % 1) / 4)
 
             while len(self.events) < (dt + 1):
                 self.events.append([])
