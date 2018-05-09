@@ -1,10 +1,10 @@
+import sys
+
 from simulator.core import System, ActorRef, Event
-from simulator.model.neuron.events import Connect, ActionPotential, Subscribe
-from simulator.model.neuron.soma import IntegrateAndFire
-from simulator.model.neuron.dendrite import LinearDendriteBranch
-from simulator.model.neuron.axon import DelayedAxonalBranch
-from simulator.model.neuron.synapse import Synapse
 from simulator.model import Logger
+from simulator.model.neuron.events import Subscribe, ActionPotential
+from simulator.network.ensemble import Ensemble, random_rule, all_to_all
+from simulator.network.network import Network
 from simulator.utils import flatten
 
 from random import choice, choices, random, randint
@@ -12,50 +12,36 @@ from random import choice, choices, random, randint
 import numpy as np
 import matplotlib.pyplot as plt
 
+sys.setrecursionlimit(25000)
 
 def main():
-    system = System()
-
     print('Creating system...')
 
-    logger_ref = system.spawn(Logger())
+    net = Network()
 
-    def axon_generator(neuron_ref: ActorRef) -> ActorRef:
-        return system.spawn(DelayedAxonalBranch(neuron_ref, synapse=Synapse()))
+    logger_ref = net.system.spawn(Logger())
 
-    def dendrite_generator(neuron_ref: ActorRef) -> ActorRef:
-        return system.spawn(LinearDendriteBranch(parent=neuron_ref, quotas={0: 100000}))
+    group = Ensemble(size=100, network=net)
 
-    neuron_proto = IntegrateAndFire(
-        dendrites_generator=dendrite_generator,
-        axon_generator=axon_generator
-    )
+    group.connect(group, random_rule(0.35))
 
     print('Done.')
     print('Spawning actors...')
 
-    xs = [system.spawn(neuron_proto) for i in range(150)]
-
-    for neuron_ref in xs:
+    for neuron_ref in group.neurons:
         neuron_ref.send(Subscribe(subscriber_ref=logger_ref))
 
-    print('creating connections...')
-
-    for neuron_ref in xs:
-        for postsynaptic_ref in choices(xs, k=45):
-            neuron_ref.send(Connect(target_id=postsynaptic_ref.id))
-
-    system.run()
+    net.run()
 
     print('Done.')
     print('Simulating...')
 
-    while system.time < 999.0:
+    while net.time < 499.0:
         events = []
         for i in range(randint(25, 45)):
-            timing = system.time + random()
+            timing = net.time + random()
             value = 3.0 + random() * 8.0
-            target_id = choice(xs).id
+            target_id = choice(group.neurons).id
             events.append(
                 Event(
                     data=ActionPotential(timing=timing, value=value),
@@ -64,8 +50,8 @@ def main():
                 )
             )
 
-        system.event_bus.add_events(events)
-        system.run(stop_time=system.time + 1)
+        net.add_events(events)
+        net.run(stop_time=net.time + 1)
 
     print('Done.')
 
@@ -80,13 +66,15 @@ def main():
 
     print('Total spikes: %d' % len(spikes))
 
-    spikes_matrix = np.zeros((150, 1000))
+    spikes_matrix = np.zeros((100, 500))
 
     for sender, timing in spikes:
         spikes_matrix[sender, int(timing)] = 1.0
 
     plt.matshow(spikes_matrix)
     plt.show()
+
+    Network.save(net, 'net.pickle')
 
 
 if __name__ == '__main__':

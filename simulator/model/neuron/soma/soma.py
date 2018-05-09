@@ -20,8 +20,8 @@ class Soma(Actor, ABC):
         self.subscribers.add(actor_ref)
 
     def on_start(self):
-        self.dendrites = self._dendrites_generator(self.ref)
-        self.axon = self._axon_generator(self.ref)
+        self.dendrites = self._dendrites_generator(self.system, self.ref)
+        self.axon = self._axon_generator(self.system, self.ref)
 
         del self._dendrites_generator
         del self._axon_generator

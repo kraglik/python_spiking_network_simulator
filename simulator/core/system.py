@@ -13,7 +13,7 @@ class System:
         self.actors_classes = dict()
         self.actor_proxies = dict()
         self.proxies = []
-        self.proxy = Proxy(event_bus=self.event_bus, id=0)
+        self.proxy = Proxy(event_bus=self.event_bus, id=0, system=self)
         self.proxies.append(self.proxy)
 
     def set_actor_proxy(self, actor, proxy=None):

@@ -1,4 +1,4 @@
-from simulator.core import EventBus
+from simulator.core.event_bus import EventBus
 
 
 class Proxy:
