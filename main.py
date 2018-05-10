@@ -7,7 +7,7 @@ from simulator.network.ensemble import Ensemble, random_rule, all_to_all
 from simulator.network.network import Network
 from simulator.utils import flatten
 
-from random import choice, choices, random, randint
+from random import choice, random, randint
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -21,27 +21,21 @@ load = False
 def main():
     print('Creating system...')
 
-    if load:
-        net = Network.load('net.pickle')
-        group = list(net.ensembles)[0]
+    net = Network()
 
-        net.run()
-        net.set_time(0)
+    print('Creating neuronal group...')
+    net.logger = net.system.spawn(Logger())
 
-    else:
-        net = Network()
+    group = Ensemble(size=150, network=net)
 
-        print('Creating neuronal group...')
-        net.logger = net.system.spawn(Logger())
+    for neuron_ref in group.neurons:
+        neuron_ref.send(Subscribe(subscriber_ref=net.logger))
 
-        group = Ensemble(size=200, network=net)
+    print('Creating synaptic connections...')
 
-        for neuron_ref in group.neurons:
-            neuron_ref.send(Subscribe(subscriber_ref=net.logger))
+    group.connect(group, random_rule(0.15))
 
-        print('Creating synaptic connections...')
-
-        group.connect(group, random_rule(0.2))
+    net.run()
 
     print('Done.')
     print('Spawning actors...')
@@ -49,11 +43,12 @@ def main():
     print('Done.')
     print('Simulating...')
 
-    while net.time < 499.0:
+    while net.time < 999.0:
         events = []
-        for i in range(randint(35, 55)):
+
+        for i in range(randint(25, 45)):
             timing = net.time + random()
-            value = 3.0 + random() * 7.0
+            value = 3.0 + random() * 6
             target_id = choice(group.neurons).id
             events.append(
                 Event(
@@ -63,6 +58,29 @@ def main():
                 )
             )
 
+        for i in range(45, 65):
+            timing = net.time + random()
+            target_id = group.neurons[i].id
+            events.append(
+                Event(
+                    data=ActionPotential(timing=net.time + random(), value=10.0),
+                    timing=timing,
+                    target_id=target_id
+                )
+            )
+
+        if net.time < 500.0:
+
+            for i in range(45, 65):
+                timing = net.time + random()
+                target_id = group.neurons[i].id
+                events.append(
+                    Event(
+                        data=ActionPotential(timing=net.time + random(), value=10.0),
+                        timing=timing,
+                        target_id=target_id
+                    )
+                )
         net.add_events(events)
         net.run(stop_time=net.time + 1)
 
@@ -79,13 +97,13 @@ def main():
 
     print('Total spikes: %d' % len(spikes))
 
-    spikes_matrix = np.zeros((201, 501))
+    spikes_matrix = np.zeros((151, 1010))
 
     for sender, timing in spikes:
         spikes_matrix[sender, int(timing)] = 1.0
 
     plt.matshow(spikes_matrix)
-    plt.show()
+    plt.savefig('example.png')
 
     Network.save(net, 'net.pickle')
 

@@ -77,7 +77,7 @@ class AxonalBranch(Actor, ABC):
             message = self.map_spike(message)
 
             for branch in self.branches:
-                branch.send(message)
+                branch.send(message, timing=message.timing)
 
             for synapse in self.synapses:
-                synapse.send(message)
+                synapse.send(message, timing=message.timing)

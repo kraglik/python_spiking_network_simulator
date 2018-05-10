@@ -3,6 +3,8 @@ from typing import Any
 
 from simulator.core import Actor, ActorRef
 from simulator.model.neuron.events import Spike, ActionPotential, SpikeTrace
+from simulator.model.neuron.synapse.plasticity import DoubleSTDPPlasticity
+from simulator.model.neuron.synapse.plasticity.DecayingSTDP import DecayingSTDPPlasticity
 from simulator.model.neuron.synapse.plasticity.plasticity_model import PlasticityModel
 from simulator.model.neuron.synapse.plasticity.STDP import STDPPlasticity
 
@@ -13,7 +15,7 @@ class Synapse(Actor, ABC):
     def __init__(self,
                  input: ActorRef = None,
                  output: ActorRef = None,
-                 plasticity_model: PlasticityModel = STDPPlasticity(),
+                 plasticity_model: PlasticityModel = DoubleSTDPPlasticity(),
                  type: int = 0):
         self.input = input
         self.output = output
