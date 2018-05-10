@@ -20,7 +20,7 @@ class AxonalBranch:
         raise NotImplementedError
 
     @abstractmethod
-    def apply_backward(self, psp: PSP):  # Not PlayStation Portable, Post Spike Potential
+    def apply_backward(self, psp: PSP):
         raise NotImplementedError
 
     @abstractmethod
