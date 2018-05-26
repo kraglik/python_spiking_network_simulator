@@ -11,15 +11,16 @@ class IntegrateAndFire(Soma):
     def __init__(self,
                  dendrites_generator: Callable[[ActorRef], ActorRef],
                  axon_generator: Callable[[ActorRef], ActorRef],
-                 u_rest: float = 0.0,
-                 u_reset: float = -10.0,
-                 tau=5.0):
+                 u_rest: float = -65.0,
+                 u_reset: float = -70.0,
+                 threshold: float = -50.0,
+                 tau=15.0):
         Soma.__init__(self, dendrites_generator, axon_generator)
 
         self.u = 0.0
         self.u_rest = u_rest
         self.u_reset = u_reset
-        self.threshold = 25.0
+        self.threshold = threshold
         self.tau = tau
 
     def apply(self, message):

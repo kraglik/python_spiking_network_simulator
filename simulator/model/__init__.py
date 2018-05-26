@@ -1,1 +1,1 @@
-from .observer import Logger
+from .logger import Logger

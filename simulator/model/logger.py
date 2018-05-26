@@ -23,3 +23,7 @@ class Logger(Actor):
     def ask(self, message: Any) -> Any:
         if message == 'get_log':
             return self.log
+        elif message == 'get_and_delete_log':
+            x = self.log
+            self.log = {}
+            return x

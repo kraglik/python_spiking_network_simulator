@@ -1,6 +1,9 @@
 from simulator.core import System
 import pickle
 
+from simulator.model.neuron.events import Reward
+from simulator.model.neuron.synapse import Synapse
+
 
 class Network:
     def __init__(self, name='network'):
@@ -22,6 +25,9 @@ class Network:
 
     def run(self, **kwargs):
         self.system.run(**kwargs)
+
+    def reinforce(self, value):
+        self.system.broadcast(Reward(self.time, value), Synapse)
 
     @staticmethod
     def save(net, filename):

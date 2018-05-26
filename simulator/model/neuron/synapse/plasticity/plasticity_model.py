@@ -15,3 +15,6 @@ class PlasticityModel(ABC):
     @abstractmethod
     def update_traces(self, spike_trace: SpikeTrace):
         raise NotImplementedError
+
+    def update_reward(self, reward):
+        pass

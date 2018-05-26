@@ -29,3 +29,5 @@ SubscriptionMessage = namedtuple('SubscriptionMessage', ['data', 'sender_id'])
 Subscribe = namedtuple('Subscribe', ['subscriber_ref'])
 
 PSP = namedtuple('PSP', ['timing', 'value'])
+
+Reward = namedtuple('Reward', ['timing', 'value'])

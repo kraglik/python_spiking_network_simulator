@@ -45,7 +45,6 @@ class EventBus(ABC):
             events.sort(key=lambda e: e.timing)
 
             while len(events) > 0 and (stop_time is None or self.time < stop_time):
-
                 event = events.pop(0)
                 self.time = event.timing
                 actor_ref = self.subscribers[event.target_id]
@@ -56,3 +55,8 @@ class EventBus(ABC):
                     actor_ref._actor.receive(event.data)
 
             self.events.pop(0)
+
+            print('Simulation time is ', self.time, 'ms', end='\r')
+
+        if stop_time is not None:
+            self.time = stop_time

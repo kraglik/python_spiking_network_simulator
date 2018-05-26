@@ -40,7 +40,7 @@ class DecayingSTDPPlasticity(PlasticityModel):
         self.pre_trace = self.pre_trace * math.exp(-(spike_trace.timing - self.last_input) * self.trace_decay_speed)
         self.time = spike_trace.timing
 
-    def _update_weight(self, spike=0.0):
-        self.w += self.nu_post * self.pre_trace * spike - self.nu_pre * self.post_trace * spike
+    def _update_weight(self):
+        self.w += self.nu_post * self.pre_trace - self.nu_pre * self.post_trace
         self.w += (1.0 - self.w) * math.exp(-(max(self.last_input, self.last_output) - self.time) * self.change_decay_speed)
         self.w = max(0.0, min(self.max_w, self.w))

@@ -7,7 +7,7 @@ from random import random
 
 
 class DelayedAxonalBranch(AxonalBranch):
-    def __init__(self, parent, delay=random() * 2.0, **kwargs):
+    def __init__(self, parent, delay=random(), **kwargs):
         super(DelayedAxonalBranch, self).__init__(parent, **kwargs)
         self.delay = delay
 

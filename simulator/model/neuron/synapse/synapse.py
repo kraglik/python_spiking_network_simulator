@@ -2,7 +2,7 @@ from abc import abstractmethod, ABC
 from typing import Any
 
 from simulator.core import Actor, ActorRef
-from simulator.model.neuron.events import Spike, ActionPotential, SpikeTrace
+from simulator.model.neuron.events import Spike, ActionPotential, SpikeTrace, Reward
 from simulator.model.neuron.synapse.plasticity import DoubleSTDPPlasticity
 from simulator.model.neuron.synapse.plasticity.DecayingSTDP import DecayingSTDPPlasticity
 from simulator.model.neuron.synapse.plasticity.plasticity_model import PlasticityModel
@@ -15,7 +15,7 @@ class Synapse(Actor, ABC):
     def __init__(self,
                  input: ActorRef = None,
                  output: ActorRef = None,
-                 plasticity_model: PlasticityModel = DoubleSTDPPlasticity(),
+                 plasticity_model: PlasticityModel = STDPPlasticity(),
                  type: int = 0):
         self.input = input
         self.output = output
@@ -28,6 +28,8 @@ class Synapse(Actor, ABC):
             self.output.send(ActionPotential(value=force, timing=message.timing))
         elif isinstance(message, SpikeTrace):
             self.plasticity_model.update_traces(message)
+        elif isinstance(message, Reward):
+            self.plasticity_model.update_reward(message)
 
     def ask(self, message: Any) -> Any:
         if message == 'type':

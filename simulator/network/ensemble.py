@@ -4,12 +4,22 @@ from simulator.model.neuron.dendrite import LinearDendriteBranch
 from simulator.model.neuron.events import Connect
 from simulator.model.neuron.soma import IntegrateAndFire
 from simulator.model.neuron.synapse import Synapse
+from simulator.model.neuron.synapse.plasticity import STDPPlasticity
+from simulator.model.neuron.synapse.plasticity.InhibitorySTDP import InhibitorySTDPPlasticity
 from simulator.network.network import Network
 from random import random as rand
 
 
-def default_axon_generator(system, neuron_ref: ActorRef) -> ActorRef:
-    return system.spawn(DelayedAxonalBranch(neuron_ref, synapse=Synapse()))
+def axon_generator(plasticity_model, delay):
+    def generator(system, neuron_ref: ActorRef) -> ActorRef:
+        return system.spawn(DelayedAxonalBranch(neuron_ref,
+                                                synapse=Synapse(plasticity_model=plasticity_model),
+                                                delay=delay))
+    return generator
+
+
+def inhibitory_axon_generator(system, neuron_ref: ActorRef) -> ActorRef:
+    return system.spawn(DelayedAxonalBranch(neuron_ref, synapse=Synapse(plasticity_model=InhibitorySTDPPlasticity())))
 
 
 def default_dendrite_generator(system, neuron_ref: ActorRef) -> ActorRef:
@@ -35,13 +45,12 @@ class Ensemble:
                  size: int,
                  network: Network,
                  neuron_proto=IntegrateAndFire(
-                     axon_generator=default_axon_generator,
+                     axon_generator=axon_generator(STDPPlasticity(), delay=0.5),
                      dendrites_generator=default_dendrite_generator)
                  ):
-        self.neuron_proto = neuron_proto
         self.size = size
         self.network = network
-        self.neurons = [self.network.system.spawn(self.neuron_proto) for _ in range(self.size)]
+        self.neurons = [self.network.system.spawn(neuron_proto) for _ in range(self.size)]
 
         network.add_ensemble(self)
 

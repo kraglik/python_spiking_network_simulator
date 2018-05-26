@@ -9,11 +9,12 @@ from .branch import AxonalBranch
 
 class DelayedAxonalBranch(AxonalBranch):
     def __init__(self,
-                 parent, delay=random() * 1.5,
+                 parent,
+                 delay=1.5,
                  start_point=Point(0, 0, 0),
                  end_point=Point(0, 0, 0)):
         AxonalBranch.__init__(self, parent, start_point, end_point)
-        self.delay = delay
+        self.delay = delay * random()
 
     def apply(self, spike: Spike):
         spike = Spike(timing=spike.timing + self.delay, sender_id=spike.sender_id)
